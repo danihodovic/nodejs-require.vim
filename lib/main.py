@@ -59,15 +59,17 @@ def findNodeModulesRequire(filename):
                 mainfile = mainfile + '.js'
             return mainfile
 
-currLine = vim.current.line
-m = re.search(REQUIRE_REGEX, vim.current.line)
-if m:
-    stmt = m.groups()[0]
-    root = None
-    if stmt.startswith('.'):
-        root = findRelativeRequire(stmt)
-    else:
-        root = findNodeModulesRequire(stmt)
+def findRequire():
+    currLine = vim.current.line
+    m = re.search(REQUIRE_REGEX, vim.current.line)
+    if m:
+        stmt = m.groups()[0]
+        root = None
+        if stmt.startswith('.'):
+            root = findRelativeRequire(stmt)
+        else:
+            root = findNodeModulesRequire(stmt)
 
-    if root:
-        vim.command('return "{}"'.format(root))
+        if root:
+            return root
+            #  vim.command('return "{}"'.format(root))

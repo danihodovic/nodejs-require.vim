@@ -1,6 +1,14 @@
-let s:pythonFile = expand('<sfile>:p:h:h')
+let s:pythonFile = expand('<sfile>:p:h:h') . '/lib/main.py'
 
-fu! NodeRequire#test()
-  echo s:pythonFile
+fu! NodeRequire#init()
+  exe 'pyfile ' . s:pythonFile
 endfu
-" execute 'pyfile ' . fnameescape(s:script)
+
+fu! NodeRequire#find()
+let file = ''
+python << EOF
+vim.command('let file = "{}"'.format(findRequire()))
+EOF
+
+  echo file
+endfu
