@@ -1,6 +1,6 @@
-let s:pythonFile = expand('<sfile>:p:h')
+let s:pythonFile = expand('<sfile>:p:h:h')
 
-fu! VimNodeRequire#test()
+fu! NodeRequire#test()
   echo s:pythonFile
 endfu
 " execute 'pyfile ' . fnameescape(s:script)

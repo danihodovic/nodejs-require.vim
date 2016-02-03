@@ -5,6 +5,9 @@ import os
 import json
 import re
 
+def sayHello():
+    print 'hello from python'
+
 REQUIRE_REGEX = r'require\(["\'](.*)["\']\)'
 
 def findRelativeRequire(requirePath):
