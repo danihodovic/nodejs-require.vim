@@ -1,0 +1,1 @@
+echom 'Hello from plugin/'
