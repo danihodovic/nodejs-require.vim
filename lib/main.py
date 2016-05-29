@@ -1,30 +1,56 @@
-# This is a clusterfuck, but surprisingly works for JS
-# TODO: Log when it can't find results
-import vim
+try:
+    import vim
+except ImportError:
+    pass
+
 import os
 import json
-import re
 
-def sayHello():
-    print 'hello from python'
+# Finds statement in cword
+# Finds statement in require
+
+# Find by relative to current path. Full pathname
+# Relative and direct
+# Unit test by passing the
 
 REQUIRE_REGEX = r'require\(["\'](.*)["\']\)'
 
-def findRelativeRequire(requirePath):
+def find_relative(current_buffer_path, required_file):
+    # Get the file without the extension
+    required_file = os.path.splitext(required_file)[0]
+
+    current_folder = os.path.dirname(current_buffer_path)
+    relative_path = os.path.join(current_folder, required_file)
+    # The require statement can contain ../../foo so we have to normalize it
+    real_path = os.path.normpath(relative_path)
+
+    # Files take precendence over directory/index.js
+    if os.path.isfile(real_path + '.js'):
+        return real_path + '.js'
+    else:
+        index_path = real_path + '/index.js'
+        if os.path.isfile(index_path):
+            return index_path
+
+
+
+def find_relative_require(requirePath):
     filename = requirePath
     if not filename.endswith('.js'):
         filename = filename + '.js'
 
-    # Node permits you to require('./foo') where foo is a directory that contains index.js
-    # Node will always prioritize a file named file.js rather than file/index.js
-    if not os.path.isfile(filename):
-        filename = requirePath + '/index.js'
-
     currDir = os.path.dirname(vim.current.buffer.name)
-    relativePath = os.path.join(currDir, filename)
-    realpath = os.path.realpath(relativePath)
+    realpath = os.path.realpath(os.path.join(currDir, filename))
+
     if os.path.isfile(realpath):
         return realpath
+    else:
+        filename = requirePath + '/index.js'
+
+        relativePath = os.path.join(currDir, filename)
+        realpath = os.path.realpath(relativePath)
+        if os.path.isfile(realpath):
+            return realpath
 
 def findNodeModulesRequire(filename):
     if filename.endswith('.js'):
@@ -55,19 +81,20 @@ def findNodeModulesRequire(filename):
         with open(packageJson) as f:
             asJson = json.load(f)
             mainfile = packageDir + '/' + asJson['main']
-            if not mainfile.endswith('.js'):
+            if mainfile.endswith('.js') == False:
                 mainfile = mainfile + '.js'
             return mainfile
 
-currLine = vim.current.line
-m = re.search(REQUIRE_REGEX, vim.current.line)
-if m:
-    stmt = m.groups()[0]
-    root = None
-    if stmt.startswith('.'):
-        root = findRelativeRequire(stmt)
-    else:
-        root = findNodeModulesRequire(stmt)
 
-    if root:
-        vim.command('return "{}"'.format(root))
+#  currLine = vim.current.line
+#  m = re.search(REQUIRE_REGEX, vim.current.line)
+#  if m:
+  #  stmt = m.groups()[0]
+  #  root = None
+  #  if stmt.startswith('.'):
+    #  root = findRelativeRequire(stmt)
+  #  else:
+    #  root = findNodeModulesRequire(stmt)
+
+  #  if root:
+    #  vim.command('return "{}"'.format(root))

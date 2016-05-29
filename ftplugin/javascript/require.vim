@@ -1,2 +1,1 @@
-" call NodeRequire#Load()
-echom 'bazzz'
+call NodeRequire#Load()
