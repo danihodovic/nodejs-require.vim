@@ -1,3 +1,5 @@
+# vim-node-require [![CircleCI](https://circleci.com/gh/danihodovic/vim-node-require/tree/dev.svg?style=svg)](https://circleci.com/gh/danihodovic/vim-node-require/tree/dev)
+
 ### Test coverage:
 
 - [ ] Require a local file
