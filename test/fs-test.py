@@ -55,5 +55,33 @@ class RelativeRequire(unittest.TestCase):
             self.fail(err)
             shutil.rmtree(temp_dir)
 
+@unittest.expectedFailure
+class PackageRequire(unittest.TestCase):
+
+    def test_find_same_dir(self):
+        '''
+        directory structure:
+
+        dir/
+            main.js         <- We are here
+            package.json
+            node_modules/
+                index.js    <- Find this file
+        '''
+
+        temp_dir = tempfile.mkdtemp(prefix='node-require-test')
+        try:
+            os.makedirs(temp_dir + '/node_modules/package')
+            open(temp_dir + '/node_modules/package/index.js', 'a').close()
+
+            current_file = temp_dir + '/main.js'
+            result = main.find_relative(current_file, 'package')
+            expected = temp_dir + 'node_modules/package/index.js'
+            self.assertEqual(expected, result)
+
+        except Exception as err:
+            self.fail(err)
+            shutil.rmtree(temp_dir)
+
 if __name__ == '__main__':
     unittest.main()
