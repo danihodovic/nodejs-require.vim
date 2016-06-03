@@ -5,12 +5,7 @@ if !has('python')
   finish
 endif
 
-
-" execute 
-
 fu! NodeRequire#Load()
-  echom 'NodeRequire#load()'
-  command! FindDani -buffer :pyfile main.py
+  " command! FindDani -buffer :pyfile main.py
 endfu
 
-" execute 'pyfile ' . fnameescape(s:script)
