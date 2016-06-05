@@ -3,6 +3,7 @@ import sys
 import os
 import tempfile
 import shutil
+import json
 
 plugin_root = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.join(plugin_root, 'lib'))
@@ -58,25 +59,30 @@ class RelativeRequire(unittest.TestCase):
 @unittest.expectedFailure
 class PackageRequire(unittest.TestCase):
 
-    def test_find_same_dir(self):
+    def test_find_main_file(self):
         '''
+        Finds a file specified as "main" in package.json
         directory structure:
 
         dir/
             main.js         <- We are here
             package.json
             node_modules/
-                index.js    <- Find this file
+                package/
+                    package.json
+                    index.js    <- Find this file
         '''
 
         temp_dir = tempfile.mkdtemp(prefix='node-require-test')
         try:
             os.makedirs(temp_dir + '/node_modules/package')
-            open(temp_dir + '/node_modules/package/index.js', 'a').close()
+            package_json = open(temp_dir + '/node_modules/package/package.json', 'w')
+            json.dump({'main': 'index.js'}, package_json)
+            open(temp_dir + '/node_modules/package/index.js', 'w').close()
 
             current_file = temp_dir + '/main.js'
             result = main.find_relative(current_file, 'package')
-            expected = temp_dir + 'node_modules/package/index.js'
+            expected = temp_dir + '/node_modules/package/index.js'
             self.assertEqual(expected, result)
 
         except Exception as err:
