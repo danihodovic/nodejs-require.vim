@@ -54,6 +54,8 @@ class RelativeRequire(unittest.TestCase):
 
         except Exception as err:
             self.fail(err)
+
+        finally:
             shutil.rmtree(temp_dir)
 
 @unittest.expectedFailure
@@ -77,16 +79,18 @@ class PackageRequire(unittest.TestCase):
         try:
             os.makedirs(temp_dir + '/node_modules/package')
             package_json = open(temp_dir + '/node_modules/package/package.json', 'w')
-            json.dump({'main': 'index.js'}, package_json)
-            open(temp_dir + '/node_modules/package/index.js', 'w').close()
+            json.dump({'main': 'foo.js'}, package_json)
+            open(temp_dir + '/node_modules/package/foo.js', 'w').close()
 
             current_file = temp_dir + '/main.js'
             result = main.find_relative(current_file, 'package')
-            expected = temp_dir + '/node_modules/package/index.js'
+            expected = temp_dir + '/node_modules/package/foo.js'
             self.assertEqual(expected, result)
 
         except Exception as err:
             self.fail(err)
+
+        finally:
             shutil.rmtree(temp_dir)
 
 if __name__ == '__main__':
