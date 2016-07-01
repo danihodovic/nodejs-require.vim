@@ -61,7 +61,7 @@ class RelativeRequire(unittest.TestCase):
 @unittest.expectedFailure
 class PackageRequire(unittest.TestCase):
 
-    def test_find_main_file(self):
+    def test_find_main_file_root_dir(self):
         '''
         Finds a file specified as "main" in package.json
         directory structure:
@@ -92,6 +92,27 @@ class PackageRequire(unittest.TestCase):
 
         finally:
             shutil.rmtree(temp_dir)
+
+    def test_find_main_file_other_dir(self):
+        temp_dir = tempfile.mkdtemp(prefix='node-require-test')
+        try:
+            os.makedirs(temp_dir + '/node_modules/package')
+            os.makedirs(temp_dir + '/node_modules/package/lib')
+            package_json = open(temp_dir + '/node_modules/package/package.json', 'w')
+            json.dump({'main': './lib/foo.js'}, package_json)
+            open(temp_dir + '/node_modules/package/lib/foo.js', 'w').close()
+
+            current_file = temp_dir + '/main.js'
+            result = main.find_relative(current_file, 'package')
+            expected = temp_dir + '/node_modules/package/lib/foo.js'
+            self.assertEqual(expected, result)
+
+        except Exception as err:
+            self.fail(err)
+
+        finally:
+            shutil.rmtree(temp_dir)
+
 
 if __name__ == '__main__':
     unittest.main()
