@@ -1,3 +1,7 @@
+machine:
+  services:
+    - docker
+
 test:
   override:
-    - python test/*
+    - docker-compose run test
