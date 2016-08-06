@@ -55,8 +55,6 @@ def find_package_require(current_buffer_path, required_file):
                 return os.path.realpath(main_file)
 
 def find_in_require_stmt(current_buffer_path, line):
-    print current_buffer_path
-    print line
     path = None
     m = re.search(REQUIRE_REGEX, line)
     if m:
