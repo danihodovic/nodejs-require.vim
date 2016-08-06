@@ -1,4 +1,4 @@
-# nodejs-require.vim [![CircleCI](https://circleci.com/gh/danihodovic/vim-node-require/tree/dev.svg?style=svg)](https://circleci.com/gh/danihodovic/vim-node-require/tree/dev)
+# nodejs-require.vim [![CircleCI](https://circleci.com/gh/danihodovic/nodejs-require.vim/tree/master.svg?style=svg)](https://circleci.com/gh/danihodovic/nodejs-require.vim/tree/master)
 
 Find the file which was `require()` called in Node.js source files. Works for both local files and
 packages in `node_modules/`.
