@@ -1,17 +1,9 @@
-try:
-    import vim
-except ImportError:
-    pass
-
 import os
 import json
+import re
 
 # Finds statement in cword
 # Finds statement in require
-
-# Find by relative to current path. Full pathname
-# Relative and direct
-# Unit test by passing the
 
 REQUIRE_REGEX = r'require\(["\'](.*)["\']\)'
 
@@ -32,33 +24,12 @@ def find_relative(current_buffer_path, required_file):
         if os.path.isfile(index_path):
             return index_path
 
+def is_root_directory(path):
+    return os.path.dirname(path) == path
 
-
-def find_relative_require(requirePath):
-    filename = requirePath
-    if not filename.endswith('.js'):
-        filename = filename + '.js'
-
-    currDir = os.path.dirname(vim.current.buffer.name)
-    realpath = os.path.realpath(os.path.join(currDir, filename))
-
-    if os.path.isfile(realpath):
-        return realpath
-    else:
-        filename = requirePath + '/index.js'
-
-        relativePath = os.path.join(currDir, filename)
-        realpath = os.path.realpath(relativePath)
-        if os.path.isfile(realpath):
-            return realpath
-
-def findNodeModulesRequire(filename):
-    if filename.endswith('.js'):
-        filename = filename[:-3]
-
-    currFile = vim.eval('expand("%:p")')
-    currDir = os.path.dirname(currFile)
-
+def find_package_require(current_buffer_path, required_file):
+    package_dir = ''
+    current_path = os.path.dirname(current_buffer_path)
     # Walk until the package is found is found or we are at fs root. This accounts for nested
     # dependencies in the packages and shrinkwrapped projects.  If we are deep in a dependency
     # tree and look for a dependency that is common with the root projects dependency, npm may
@@ -67,34 +38,32 @@ def findNodeModulesRequire(filename):
     # E.g we are looking for dependency c in b
     # $PROJ_ROOT/node_modules/a/node_modules/b
     # $PROJ_ROOT/node_modules/c
-
-    packageDir = ''
-    while currDir != '/':
-        if 'node_modules' in os.listdir(currDir):
-            packageDir = os.path.realpath(currDir + '/node_modules/' + filename)
-            if os.path.isdir(packageDir):
+    while not is_root_directory(current_path):
+        if 'node_modules' in os.listdir(current_path):
+            package_dir_path = os.path.join(current_path, 'node_modules', required_file)
+            package_dir = os.path.realpath(package_dir_path)
+            if os.path.isdir(package_dir):
                 break
-        currDir = os.path.dirname(currDir)
+        current_path = os.path.dirname(current_path)
 
-    packageJson = packageDir + '/package.json'
-    if os.path.isfile(packageJson):
-        with open(packageJson) as f:
-            asJson = json.load(f)
-            mainfile = packageDir + '/' + asJson['main']
-            if mainfile.endswith('.js') == False:
-                mainfile = mainfile + '.js'
-            return mainfile
+    if package_dir != '':
+        package_json = os.path.join(package_dir, 'package.json')
+        if os.path.isfile(package_json):
+            with open(package_json) as package_json_file:
+                as_json = json.load(package_json_file)
+                main_file = os.path.join(package_dir, as_json['main'])
+                return os.path.realpath(main_file)
 
+def find_in_require_stmt(current_buffer_path, line):
+    print current_buffer_path
+    print line
+    path = None
+    m = re.search(REQUIRE_REGEX, line)
+    if m:
+        stmt = m.groups()[0]
+        if stmt.startswith('.'):
+            path = find_relative(current_buffer_path, stmt)
+        else:
+            path = find_package_require(current_buffer_path, stmt)
+        return path
 
-#  currLine = vim.current.line
-#  m = re.search(REQUIRE_REGEX, vim.current.line)
-#  if m:
-  #  stmt = m.groups()[0]
-  #  root = None
-  #  if stmt.startswith('.'):
-    #  root = findRelativeRequire(stmt)
-  #  else:
-    #  root = findNodeModulesRequire(stmt)
-
-  #  if root:
-    #  vim.command('return "{}"'.format(root))
