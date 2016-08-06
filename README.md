@@ -17,8 +17,6 @@ Using a mapping:
 
     autocmd FileType javascript nnoremap <buffer>gf :execute 'edit ' . require#find_in_current_line()<cr>
 
-  autocmd FileType javascript noremap <silent><buffer>gd :call TernOrDucktape()<cr>
-
 # Installation
 You need a VIM version that was compiled with Python 2.6 or later (+python).
 
@@ -35,7 +33,6 @@ Run `:PlugInstall`
 - [X] Require a local file and fall back to index.js if the require path is a directory
 - [X] Require a local file a directory above
 - [X] Require a local file a directory below
-
 - [X] Require a package file where the package.json `main` property points to a file
 - [ ] Require a package file relative to the package directory
 
