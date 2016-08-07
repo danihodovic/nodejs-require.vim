@@ -19,14 +19,14 @@ fu! require#find_in_current_line()
   endif
   let path = ''
 python << EOF
-path = find_in_require_stmt(vim.eval('a:current_file'), vim.eval('a:require_stmt'))
+path = find_in_require_stmt(vim.eval('current_buffer_path'), vim.eval('current_line'))
 vim.command('let path = "{}"'.format(path))
 EOF
-if path == 'None'
-  echom 'No path found...'
-else
-  return path
-endif
+  if path == 'None'
+    echom 'No path found...'
+  else
+    return path
+  endif
 endfu
 
 " Pass the current filename and the require call argument to the function. 
@@ -37,11 +37,11 @@ python << EOF
 path = find(vim.eval('a:current_file'), vim.eval('a:require_stmt'))
 vim.command('let path = "{}"'.format(path))
 EOF
-if path == 'None'
-  echom 'No path found...'
-else
-  return path
-endif
+  if path == 'None'
+    echom 'No path found...'
+  else
+    return path
+  endif
 endfu
 
 " Declare a function that can autoload this file 
