@@ -54,14 +54,21 @@ def find_package_require(current_buffer_path, required_file):
                 main_file = os.path.join(package_dir, as_json['main'])
                 return os.path.realpath(main_file)
 
-def find_in_require_stmt(current_buffer_path, line):
-    path = None
+def find(current_buffer_path, stmt):
+    if stmt.startswith('.'):
+        path = find_relative(current_buffer_path, stmt)
+    else:
+        path = find_package_require(current_buffer_path, stmt)
+    return path
+
+def extract_require_stmt(line):
     m = re.search(REQUIRE_REGEX, line)
     if m:
         stmt = m.groups()[0]
-        if stmt.startswith('.'):
-            path = find_relative(current_buffer_path, stmt)
-        else:
-            path = find_package_require(current_buffer_path, stmt)
-        return path
+        return stmt
+
+def find_in_require_stmt(current_buffer_path, line):
+    stmt = extract_require_stmt(line)
+    if stmt:
+        return find(current_buffer_path, stmt)
 

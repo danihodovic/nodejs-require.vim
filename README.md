@@ -17,6 +17,18 @@ Using a mapping:
 
     autocmd FileType javascript nnoremap <buffer>gf :execute 'edit ' . require#find_in_current_line()<cr>
 
+## API
+
+    require#find_in_current_line()
+
+Infers the path of the current buffer and the current line. Returns the path of found file.
+
+    require#find(current_file, require_stmt)
+
+Pass the current file path and the require statement to the function. Returns the path of the found
+file. Example usage: `echom require#find(expand('%:p'), expand('<cword>'))`
+
+
 # Installation
 You need a VIM version that was compiled with Python 2.6 or later (+python).
 
