@@ -45,6 +45,7 @@ def find_package_require(current_buffer_path, required_file):
             if os.path.isdir(package_dir):
                 break
         current_path = os.path.dirname(current_path)
+    print 'package_dir', package_dir
 
     if package_dir != '':
         package_json = os.path.join(package_dir, 'package.json')

@@ -4,5 +4,5 @@ machine:
 
 test:
   override:
-    - docker build -t nodejs-require-test -f Dockerfile.test .
-    - docker run nodejs-require-test
+    - make build
+    - make test

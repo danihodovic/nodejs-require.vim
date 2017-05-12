@@ -48,3 +48,8 @@ Run `:PlugInstall`
 - [X] Require a package file where the package.json `main` property points to a file
 - [ ] Require a package file relative to the package directory
 
+# Contributing
+
+## Testing
+
+
